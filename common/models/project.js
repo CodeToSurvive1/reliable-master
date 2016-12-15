@@ -1,8 +1,11 @@
 'use strict';
 
 const mongoose = require('mongoose');
-
+var request = require('request');
 const _ = require('../../common/utils/helper');
+var fs = require("fs");
+var http = require("http");
+var iconv = require("iconv-lite");
 
 const Schema = mongoose.Schema;
 const P = mongoose.Promise;
@@ -161,7 +164,28 @@ const ProjectSchema = new Schema({
 
   serialNumber: {
     type: String
+  },
+
+  apkUrl:{
+    type: String
+  },
+
+  apkPath:{
+    type: String
+  },
+
+  scriptUrl:{
+    type: String
+  },
+
+  statusUrl:{
+    type: String
+  },
+
+  resultUrl:{
+    type: String
   }
+
 });
 
 ProjectSchema.index({
@@ -171,14 +195,12 @@ ProjectSchema.index({
 
 ProjectSchema.methods.add = function() {
   const promise = new P();
-
   this.save((error, data) => {
-
     if (error) {
       promise.reject(error);
     } else {
       promise.resolve(null, data);
-    }
+      }
   });
   return promise;
 };

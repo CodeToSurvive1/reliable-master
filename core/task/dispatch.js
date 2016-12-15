@@ -8,11 +8,12 @@ const models = require('../../common/models');
 const _ = require('../../common/utils/helper');
 const logger = require('../../common/utils/logger');
 const options = require('../../common/config').get();
+let REQUST = require("co-request");
 
 const Task = models.Task;
 const Project = models.Project;
 const Device = models.Device;
-
+const Attachment = models.Attachment;
 
 module.exports = co.wrap(function* () {
   const task = new Task();
@@ -26,6 +27,11 @@ module.exports = co.wrap(function* () {
   const project = new Project();
   const projectData = yield project.getById(taskData.projectId);
 
+
+  const attachment = new Attachment();
+  const attachmentData = yield  attachment.getByProjectId(taskData.projectId);
+  console.log("****************************************");
+  console.log(attachmentData);
   if (!projectData) {
     logger.debug('no projectData');
     return;
@@ -43,7 +49,8 @@ module.exports = co.wrap(function* () {
       taskId: taskData._id,
       type: 'task',
       serialNumber: projectData.serialNumber,
-      runiOS: projectData.runiOS
+      runiOS: projectData.runiOS,
+      attachmentId:attachmentData._id
     }
   });
 });
@@ -51,19 +58,24 @@ module.exports = co.wrap(function* () {
 /**
  * 通知业务系统任务开始
  */
-function* jobstart(taskId) {
+function* jobstart(projectId) {
+  //
+  // var result = request({
+  //   uri: 'http://192.1.1.7:9090/demo/services/wsdevice/status/' + projectId,
+  //   method: 'get'
+  // });
 
-  var result = yield request({
-    uri: options.businessUrls.jobstart + taskId,
-    method: 'get'
-  });
+  co(function* () {
+      var result = yield REQUST.get({ url:  'http://192.1.1.7:9090/demo/services/wsdevice/status/' + projectId+"?status=running"});
+      result = yield JSON.parse(result.body);
+      console.log("*********************");
+      console.log(result);
+      return result;
 
-  try {
-    result = JSON.parse(result.body);
-    return result;
-  } catch (e) {
-    return false;
-  }
+  }).catch(function (err) {
+        console.error(err);
+    });
+
 }
 
 module.exports.success = co.wrap(function* (data, slave) {
@@ -84,8 +96,9 @@ module.exports.success = co.wrap(function* (data, slave) {
     });
 
     //通知业务系统任务开始
+    var thisTaskData = yield task.getById(data.taskId);
     try {
-      yield jobstart(data.taskId);
+      yield jobstart(thisTaskData.projectId);
     } catch (ex) {
       console.log('通知业务系统task开始运行报错', data.taskId);
     }

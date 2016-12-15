@@ -20,7 +20,9 @@ exports.Task = require('./task');
 exports.Oauth = require('./oauth');
 exports.Plugin = require('./plugin');
 exports.Project = require('./project');
+exports.Attachment = require('./attachment');
 exports.Subscribe = require('./subscribe');
 exports.Slave = require('./slave');
 exports.Device = require('./device');
+
 
