@@ -49,8 +49,5 @@ module.exports = function(app) {
   app.post('/api/matc/result',bodyParse({multipart:true}), controllers.api.matc.result);
   app.post('/api/matc/test',bodyParse({multipart:true}), controllers.api.matc.test);
 
-  //app/script/aaa
-  app.get('/getAttachments/:method/:attachmentId',koaBody,controllers.api.matc.attachments);
-
   logger.debug('router set');
 };

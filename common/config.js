@@ -16,9 +16,9 @@ const defaultCfg = {
   database: `mongodb://${mongo}/reliable`,
   businessUrls:{
     // 任务结束返回打包结果接口
-    jobresult:'http://192.1.1.7:9090/demo/services/wsdevice/result/1/130',
+    jobresult:'http://localhost:3333/api/matc/test',
     //任务开始通知修改业务系统状态接口
-    jobstart:'http://192.1.1.7:9090/demo/services/wsdevice/status/',
+    jobstart:'http://localhost:3333/',
   },
   site: {
     title: 'Reliable',

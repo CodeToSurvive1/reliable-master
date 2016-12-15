@@ -6,11 +6,7 @@ var path = require('path');
 var fs = require('fs');
 const options = require('../../../../common/config').get();
 var request = require('request');
-let REQUST = require("co-request");
-let co = require("co");
 
-const Task = models.Task;
-const task = new Task();
 // 结果返回
 function* result() {
 
@@ -28,18 +24,14 @@ function* result() {
         _.mkdir(destDir);
 
         var file = path.join(destDir, name);
-        console.log(file);
 
-        var thisTaskData = yield task.getById(nameArray[0]);
-        var projectId = thisTaskData.projectId;
         var promise = new Promise(function (resolve, reject) {
           var out = fs.createReadStream(tempPath).pipe(
-            fs.createWriteStream(file)//创建一个可写流
+            fs.createWriteStream(file)//创建一个可写流  
           );
           out.on('finish', function () {
             resolve("OK");
             upload(file);
-            jobEnd(projectId);
           });
         });
 
@@ -63,32 +55,11 @@ function* result() {
   }
 }
 
-//  //通知业务系统任务结束
-function jobEnd(projectId) {
-  //
-  // var result = request({
-  //   uri: 'http://192.1.1.7:9090/demo/services/wsdevice/status/' + projectId,
-  //   method: 'get'
-  // });
-
-  co(function* () {
-      var result = yield REQUST.get({ url:  'http://192.1.1.7:9090/demo/services/wsdevice/status/' + projectId+"?status=passed"});
-      result = yield JSON.parse(result.body);
-      console.log("*********************");
-      console.log(result);
-      return result;
-
-  }).catch(function (err) {
-        console.error(err);
-    });
-
-}
-
 //将结果上传到业务系统中
 function upload(file) {
   var formData = {
     // my_field: 'my_value',
-    // my_buffer: new Buffer([1, 2, 3]),
+    my_buffer: new Buffer([1, 2, 3]),
     attachments: [
       fs.createReadStream(file)
     ],
