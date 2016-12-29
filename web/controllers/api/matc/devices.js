@@ -94,6 +94,7 @@ function *refreshAllDevicesBySlaves() {
                             device.releaseVersion = slaveDevice.releaseVersion;
                             device.sdkVersion = slaveDevice.sdkVersion;
                             device.abi = slaveDevice.abi;
+                            device.slaveIP = ip;
                             var screen = slaveDevice.screen;
                             var arrays = screen.split("x");
                             device.screenWidth = arrays[0];

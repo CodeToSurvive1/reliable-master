@@ -34,6 +34,13 @@ const Devicechema = new Schema({
 
 
     /**
+     * slave节点IP
+     */
+    slaveIP: {
+        type: String
+    },
+
+    /**
      * slave节点id
      */
     slaveId: {
